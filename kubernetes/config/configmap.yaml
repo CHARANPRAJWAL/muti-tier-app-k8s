@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+  namespace: mtapp
+  labels:
+    app.kubernetes.io/name: multi-tier-app
+data:
+  DB_HOST: "postgres-service"
+  DB_PORT: "5432"
+  DB_NAME: "appdb"
+  BACKEND_PORT: "5000"
+  # Frontend config - uses /api since Ingress routes this to backend
+  REACT_APP_API_URL: "/api"

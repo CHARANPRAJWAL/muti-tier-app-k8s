@@ -1,0 +1,46 @@
+services:
+  postgres:
+    image: postgres:15-alpine
+    container_name: multi-tier-db
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${DB_PORT}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    image: charanprajwal001/backend-app:latest
+    container_name: multi-tier-backend
+    environment:
+      PORT: ${BACKEND_PORT}
+      DB_HOST: ${DB_HOST}
+      DB_PORT: 5432
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      NODE_ENV: ${NODE_ENV}
+    ports:
+      - "${BACKEND_PORT}:5000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  frontend:
+    image: charanprajwal001/frontend-app:latest
+    container_name: multi-tier-frontend
+    ports:
+      - "${FRONTEND_PORT}:3000"
+    depends_on:
+      - backend
+
+volumes:
+  postgres_data:

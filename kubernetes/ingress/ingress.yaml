@@ -3,6 +3,12 @@ kind: Ingress
 metadata:
   name: app-ingress
   namespace: mtapp
+  labels:
+    app.kubernetes.io/name: multi-tier-app
+  annotations:
+    nginx.ingress.kubernetes.io/proxy-body-size: "10m"
+    nginx.ingress.kubernetes.io/proxy-read-timeout: "60"
+    nginx.ingress.kubernetes.io/proxy-send-timeout: "60"
 spec:
   ingressClassName: nginx
   rules:
@@ -22,3 +28,9 @@ spec:
                 name: frontend-service
                 port:
                   number: 80
+  # Uncomment for TLS
+  # tls:
+  #   - hosts:
+  #       - multi-tier-app.local
+  #     secretName: multi-tier-app-tls
+  

@@ -1,4 +1,3 @@
-# Backend Deployment
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -62,7 +61,7 @@ spec:
                   name: db-credentials
                   key: DB_PASSWORD
             - name: NODE_ENV
-              value: 'production'
+              value: "production"
           resources:
             requests:
               cpu: 100m
@@ -98,22 +97,3 @@ spec:
                 sleep 2
               done
               echo "PostgreSQL is ready!"
----
-# Backend Service
-apiVersion: v1
-kind: Service
-metadata:
-  name: backend-service
-  namespace: mtapp
-  labels:
-    app.kubernetes.io/name: backend
-    app.kubernetes.io/component: api
-spec:
-  type: ClusterIP
-  ports:
-    - port: 5000
-      targetPort: 5000
-      protocol: TCP
-      name: http
-  selector:
-    app.kubernetes.io/name: backend
